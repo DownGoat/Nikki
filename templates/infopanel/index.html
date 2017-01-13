@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Honeypot Attacks Live Map</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "infopanel/styles/jquery-jvectormap-2.0.3.css" %}" type="text/css"
+          media="screen"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="{% static "infopanel/scripts/jquery-jvectormap-2.0.3.min.js" %}"></script>
+    <script src="{% static "infopanel/scripts/jquery-jvectormap-world-mill.js" %}"></script>
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <style>
+        body {
+            background-color: #333333;
+            color: #984D44;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        #container {
+            margin: auto;
+            width: 50%;
+            padding: 10px;
+        }
+
+        #container h1 {
+            margin: auto;
+            width: 50%;
+            padding: 10px;
+        }
+
+        #thelist {
+
+            height: 100%;
+            width: 100%;
+            list-style: none;
+        }
+
+        #thelist li {
+            background-color: #984D44;
+            margin-bottom: 3px;
+            margin-left: -20px;
+            color: #333333;
+        }
+
+        #thelist li span {
+            padding-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <h1>Honeypot Attacks Live Map</h1>
+    <div id="world-map" style="width: 1200px; height: 800px"></div>
+    <div id="list-container">
+        <ul id="thelist">
+
+        </ul>
+    </div>
+</div>
+
+<div id="session-id" session="0"></div>
+<script>
+    $(function () {
+        $('#world-map').vectorMap({
+            map: 'world_mill',
+            scaleColors: ['#C8EEFF', '#0071A4'],
+            normalizeFunction: 'polynomial',
+            hoverOpacity: 0.7,
+            hoverColor: false,
+            markerStyle: {
+                initial: {
+                    fill: '#984D44',
+                    stroke: '#383f47',
+                    r: 7
+                }
+            },
+            backgroundColor: '#333333',
+        });
+    });
+</script>
+
+<script>
+
+    function get_data(id) {
+        setTimeout( function (id) {
+            var d = new Date();
+            var url = "latest/" + $("#session-id").attr("session");
+
+            $.get(url, function (data) {
+                var map_object = $('#world-map').vectorMap('get', 'mapObject');
+                if (data.success) {
+                    var items = [];
+                    console.log(data.data[data.data.length - 1].id);
+                    $("#session-id").attr("session", data.data[data.data.length - 1].id);
+                    data.data.forEach(function(session) {
+                        map_object.addMarker(session.id, {latLng: [session.latitude, session.longitude], name:session.city + ":" + session.src_ip});
+
+                        items.push('<li><span class="country-code ' + session.country_code + '">' + session.country_name + '</span><span class="type">' + session.type + '</span><span class="ip"><a href="https://abuseipdb.com/check/' + session.src_ip + '">' + session.src_ip + '</a></span></li>');
+                    });
+
+                    $('#thelist').prepend(items.join(''));
+                }
+            });
+
+            get_data($("#session-id").attr("session"));
+        }, 2000)
+    }
+
+    get_data(0);
+</script>
+</body>
+</html>
