@@ -27,3 +27,16 @@ def create_session(request):
     else:
 
         return JsonResponse({"success": True})
+
+
+@csrf_exempt
+def create_login_details(request):
+    if request.method == "POST":
+        json_data = request.body.decode("utf-8")
+        resultJson = serializers.deserialize('json', request.body)
+
+        for obj in resultJson:
+            obj.save()
+
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": True})
