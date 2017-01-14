@@ -14,6 +14,12 @@ class SSHSession(models.Model):
     encCS = models.CharField(max_length=1024)
     version = models.CharField(max_length=1024)
 
+    country_code = models.CharField(max_length=16, blank=True)
+    country_name = models.CharField(max_length=256, blank=True)
+    longitude = models.CharField(max_length=256, blank=True)
+    latitude = models.CharField(max_length=256, blank=True)
+    city = models.CharField(max_length=256, blank=True)
+
     def __str__(self):
         return "SSH {0} - {1} - {2} - {3}".format(self.sensor, self.src_ip, self.username1, self.password1)
 
