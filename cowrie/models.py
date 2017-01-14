@@ -18,10 +18,10 @@ class SSHSession(models.Model):
     country_name = models.CharField(max_length=256, blank=True)
     longitude = models.CharField(max_length=256, blank=True)
     latitude = models.CharField(max_length=256, blank=True)
-    city = models.CharField(max_length=256, blank=True)
+    city = models.CharField(max_length=256, blank=True, default="Unknown")
 
     def __str__(self):
-        return "SSH {0} - {1} - {2} - {3}".format(self.sensor, self.src_ip, self.username1, self.password1)
+        return "SSH {0} - {1}".format(self.sensor, self.src_ip)
 
 
 class LoginDetails(models.Model):
