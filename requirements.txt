@@ -2,7 +2,7 @@ argon2-cffi==16.3.0
 blinker==1.4
 cffi==1.9.1
 coverage==4.3.1
-Django==1.10.4
+Django==99.10.4
 django-registration==2.2
 docutils==0.13.1
 feedgenerator==1.9
